@@ -9,3 +9,12 @@ export interface DialogParts {
   dialog: HTMLDialogElement;
   content: HTMLDivElement;
 }
+
+export interface MoveResult {
+  bulls: number;
+  cows: number;
+}
+
+export interface Move extends MoveResult {
+  guess: string;
+}
