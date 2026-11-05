@@ -9,7 +9,7 @@
     // Environment Settings
     "module": "esnext",
     "target": "esnext",
-    "types": [],
+    "types": ["vite/client"],
     "moduleResolution": "bundler",
     "lib": ["esnext", "dom"],
     "noEmit": true,
