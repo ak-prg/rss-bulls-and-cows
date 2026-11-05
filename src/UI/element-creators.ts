@@ -42,8 +42,19 @@ function appendEach<T>(
   parent.append(...elements);
 }
 
+function createLink(
+  href: string,
+  className: string,
+  parent?: HTMLElement,
+  text?: string
+): HTMLAnchorElement {
+  const attrs = { href, target: '_blank', rel: 'noopener noreferrer' };
+  return createElement('a', { className, text, attrs, parent });
+}
+
 export const elementCreators = {
   createElement,
   createButton,
   appendEach,
+  createLink,
 };
