@@ -1,6 +1,15 @@
 import { DIGITS } from '../constants';
 import type { Move } from '../types';
 
+export function isGuessLengthOk(guess: string, length: number): boolean {
+  return guess.length === length;
+}
+
+export function areDigitsUnique(guess: string): boolean {
+  const set = new Set(guess.toLowerCase());
+  return set.size === guess.length;
+}
+
 export function createDigitValidator(base: number): (char: string) => boolean {
   const charset = DIGITS.slice(0, base);
   return (char: string): boolean => {
@@ -8,30 +17,14 @@ export function createDigitValidator(base: number): (char: string) => boolean {
   };
 }
 
-export function isGuessLengthOk(guess: string, length: number): boolean {
-  void guess;
-  void length;
-  throw new Error('not implemented');
-}
-
-export function areDigitsUnique(guess: string): boolean {
-  void guess;
-  throw new Error('not implemented');
-}
-
 export function isGuessRepeated(
   guess: string,
   moves: readonly Readonly<Move>[]
 ): boolean {
-  void guess;
-  void moves;
-  throw new Error('not implemented');
+  return moves.some((item) => item.guess.toLowerCase() === guess.toLowerCase());
 }
 
-export function createPermutationCounter(): (
-  length: number,
-  base: number
-) => number {
+export function createPermutationCounter() {
   let cache = new Map<string, number>();
 
   return function count(length: number, base: number): number {
