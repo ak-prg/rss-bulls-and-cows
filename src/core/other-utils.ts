@@ -1,6 +1,6 @@
 // Pure functions
 
-import type { CategoryKey, RoundStat } from '../types';
+import type { CategoryKey, RoundStat, StatsByCategory } from '../types';
 
 export function getCategoryKey(
   secretLength: number,
@@ -34,4 +34,20 @@ export function formatDate(ms: number, timezoneOffsetMin: number): string {
   const day = String(local.getUTCDate()).padStart(2, '0');
   const month = String(local.getUTCMonth() + 1).padStart(2, '0');
   return `${day}.${month}.${local.getUTCFullYear()}`;
+}
+
+// todo
+
+export function getTop10(stats: readonly RoundStat[]): RoundStat[] {
+  void stats;
+  throw new Error('not implemented');
+}
+
+export function addStat(
+  stats: StatsByCategory,
+  newStat: RoundStat
+): StatsByCategory {
+  void stats;
+  void newStat;
+  throw new Error('not implemented');
 }
