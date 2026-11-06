@@ -32,6 +32,13 @@ export interface BoardCallbacks {
   onGuess: (guess: string) => void;
 }
 
+export interface SettingsCallbacks {
+  onSetRadix: (radix: number) => void;
+  onSetLength: (length: number) => void;
+  onNewGame: () => void;
+  onSetGameStatus: (status: GameStatus) => void;
+}
+
 export interface State {
   round: Readonly<Round>;
   statistics: StatsByCategory;
