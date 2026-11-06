@@ -1,4 +1,4 @@
-import type { ElementOptions } from '../types';
+import type { DialogParts, ElementOptions } from '../types';
 
 function createElement<K extends keyof HTMLElementTagNameMap>(
   tag: K,
@@ -52,9 +52,48 @@ function createLink(
   return createElement('a', { className, text, attrs, parent });
 }
 
+function createDialog(
+  block: string,
+  title: string,
+  parent?: HTMLElement
+): DialogParts {
+  const dialog = createElement('dialog', { className: block, parent });
+  const content = createElement('div', {
+    className: `${block}__content`,
+    parent: dialog,
+  });
+  createElement('h2', {
+    className: `${block}__title`,
+    text: title,
+    parent: content,
+  });
+
+  return { dialog, content };
+}
+
+function createFieldset(
+  block: string,
+  legend: string,
+  parent?: HTMLElement
+): HTMLFieldSetElement {
+  const fieldset = createElement('fieldset', {
+    className: `${block}__section`,
+    parent,
+  });
+  createElement('legend', {
+    className: `${block}__section-title`,
+    text: legend,
+    parent: fieldset,
+  });
+
+  return fieldset;
+}
+
 export const elementCreators = {
   createElement,
   createButton,
   appendEach,
   createLink,
+  createDialog,
+  createFieldset,
 };
