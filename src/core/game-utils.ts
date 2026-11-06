@@ -39,3 +39,49 @@ export function createPermutationCounter() {
 }
 
 export const countPossibleSecrets = createPermutationCounter();
+
+// to add
+export function validateRadixInput(input: number): boolean {
+  void input;
+  throw new Error('not implemented');
+}
+
+export function validateLengthSecret(length: number, base: number): boolean {
+  void length;
+  void base;
+  throw new Error('not implemented');
+}
+
+function makeChoice(
+  length: number,
+  digits: string[],
+  random: () => number
+): string {
+  void length;
+  void digits;
+  void random;
+  throw new Error('not implemented');
+}
+
+export function generateSecret(
+  length: number,
+  base: number,
+  random = Math.random
+): string {
+  void length;
+  void base;
+  void random;
+  makeChoice(0, [''], () => 0);
+  throw new Error('not implemented');
+}
+
+export function isValidGuess(
+  guess: string,
+  length: number,
+  base: number
+): boolean {
+  void length;
+  void base;
+  void guess;
+  throw new Error('not implemented');
+}
