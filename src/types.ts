@@ -28,6 +28,10 @@ export interface ViewCallbacks {
   onNewGame: () => void;
 }
 
+export interface BoardCallbacks {
+  onGuess: (guess: string) => void;
+}
+
 export interface State {
   round: Readonly<Round>;
   statistics: StatsByCategory;

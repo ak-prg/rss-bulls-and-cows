@@ -1,4 +1,9 @@
-import type { HeaderCallbacks, State, ViewCallbacks } from './types';
+import type {
+  BoardCallbacks,
+  HeaderCallbacks,
+  State,
+  ViewCallbacks,
+} from './types';
 import { createFooter } from './UI/footer';
 import { createBoard, initBoard, updateBoard } from './UI/game-board';
 import { createHeader } from './UI/header';
@@ -30,8 +35,8 @@ export function openSettingsModal() {
   settingsModal.showModal();
 }
 
-export function initUI(state: State) {
-  initBoard(state);
+export function initUI(state: State, boardCB: BoardCallbacks) {
+  initBoard(state, boardCB);
 }
 
 export function updateUI(state: State) {

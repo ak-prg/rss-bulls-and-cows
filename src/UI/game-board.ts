@@ -1,8 +1,8 @@
 import { DIGITS } from '../constants';
-import type { Move, State } from '../types';
+import type { BoardCallbacks, Move, State } from '../types';
 import { elementCreators } from './element-creators';
 import { createHistoryRow } from './history-row';
-import { createInputRow } from './input-row';
+import { createInputRow, initInputRow, updateInputRow } from './input-row';
 
 const { createElement } = elementCreators;
 
@@ -40,7 +40,7 @@ let charset: string;
 let allowed: HTMLSpanElement;
 let winMessageSpan: HTMLSpanElement;
 
-export function initBoard(state: State): void {
+export function initBoard(state: State, callbacks: BoardCallbacks): void {
   const firstRow: Move = {
     guess: '?'.repeat(state.secretLength),
     bulls: 0,
@@ -51,7 +51,8 @@ export function initBoard(state: State): void {
     '.game-board__history'
   ) as HTMLUListElement;
   first = createHistoryRow(firstRow, true, historyList);
-  last = createInputRow(state.secretLength, historyList);
+  last = createInputRow(historyList);
+  initInputRow(last, state, callbacks.onGuess);
 
   charset = DIGITS.slice(0, state.radix);
   allowed = document.querySelector(
@@ -73,6 +74,8 @@ export function updateBoard(state: State): void {
   );
   middle.forEach((el) => historyList.appendChild(el));
   historyList.appendChild(last);
+
+  updateInputRow(state);
 
   const isPlaying = state.gameStatus === 'playing';
   allowed.textContent = charset;
