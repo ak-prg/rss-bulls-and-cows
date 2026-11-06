@@ -183,6 +183,6 @@ function onStartNewGame() {
   callbacks.onSetGameStatus('idle');
   callbacks.onSetRadix(selectedRadix);
   callbacks.onSetLength(selectedLength);
-  callbacks.onNewGame();
+  callbacks.onStart();
   hide();
 }

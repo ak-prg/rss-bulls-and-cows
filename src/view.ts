@@ -1,44 +1,35 @@
-import type {
-  BoardCallbacks,
-  HeaderCallbacks,
-  State,
-  ViewCallbacks,
-} from './types';
+import type { State, ViewCallbacks } from './types';
 import { createFooter } from './UI/footer';
 import { createBoard, initBoard, updateBoard } from './UI/game-board';
 import { createHeader } from './UI/header';
-import { createRecordsModal } from './UI/records-modal';
-import { createSettingsModal } from './UI/settings-modal';
+import { createRecordsModal, initRecordsModal } from './UI/records-modal';
+import { createSettingsModal, initSettingsModal } from './UI/settings-modal';
 
-// let board: HTMLElement;
 let settingsModal: HTMLDialogElement;
 let recordsModal: HTMLDialogElement;
+let viewCb: ViewCallbacks;
 
-export function renderInitial(callbacks: ViewCallbacks) {
-  const headerCB: HeaderCallbacks = {
-    onNewGame: callbacks.onNewGame,
-    onOpenRecords: openRecordsModal,
-  };
-
-  createHeader(headerCB);
+export function createViews(callbacks: ViewCallbacks) {
+  viewCb = callbacks;
+  createHeader(viewCb.headerCb);
   createBoard();
   createFooter();
   settingsModal = createSettingsModal() as HTMLDialogElement;
   recordsModal = createRecordsModal() as HTMLDialogElement;
 }
 
-const openRecordsModal = () => {
-  recordsModal.showModal();
-};
-
-export function openSettingsModal() {
-  settingsModal.showModal();
+export function openInitRecordsModal(state: State) {
+  initRecordsModal(recordsModal, state);
 }
 
-export function initUI(state: State, boardCB: BoardCallbacks) {
-  initBoard(state, boardCB);
+export function openInitSettingsModal(state: State) {
+  initSettingsModal(settingsModal, state, viewCb.settingsCb);
 }
 
-export function updateUI(state: State) {
+export function initGameBoard(state: State) {
+  initBoard(state, viewCb.boardCb);
+}
+
+export function updateGameBoard(state: State) {
   updateBoard(state);
 }

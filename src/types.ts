@@ -1,44 +1,3 @@
-export interface ElementOptions {
-  className?: string | undefined;
-  text?: string | number | undefined;
-  attrs?: Record<string, string> | undefined;
-  parent?: HTMLElement | undefined;
-}
-
-export interface DialogParts {
-  dialog: HTMLDialogElement;
-  content: HTMLDivElement;
-}
-
-export interface MoveResult {
-  bulls: number;
-  cows: number;
-}
-
-export interface Move extends MoveResult {
-  guess: string;
-}
-
-export interface HeaderCallbacks {
-  onNewGame: () => void;
-  onOpenRecords: () => void;
-}
-
-export interface ViewCallbacks {
-  onNewGame: () => void;
-}
-
-export interface BoardCallbacks {
-  onGuess: (guess: string) => void;
-}
-
-export interface SettingsCallbacks {
-  onSetRadix: (radix: number) => void;
-  onSetLength: (length: number) => void;
-  onNewGame: () => void;
-  onSetGameStatus: (status: GameStatus) => void;
-}
-
 export interface State {
   round: Readonly<Round>;
   statistics: StatsByCategory;
@@ -68,3 +27,50 @@ export interface RoundStat {
 }
 
 export type GameStatus = 'idle' | 'playing' | 'won';
+
+export interface MoveResult {
+  bulls: number;
+  cows: number;
+}
+
+export interface Move extends MoveResult {
+  guess: string;
+}
+
+// callbacks
+
+export interface ViewCallbacks {
+  headerCb: HeaderCallbacks;
+  boardCb: BoardCallbacks;
+  settingsCb: SettingsCallbacks;
+}
+
+export interface HeaderCallbacks {
+  onNewGame: () => void;
+  onOpenRecords: () => void;
+}
+
+export interface BoardCallbacks {
+  onGuess: (guess: string) => void;
+}
+
+export interface SettingsCallbacks {
+  onSetRadix: (radix: number) => void;
+  onSetLength: (length: number) => void;
+  onStart: () => void;
+  onSetGameStatus: (status: GameStatus) => void;
+}
+
+// UI
+
+export interface ElementOptions {
+  className?: string | undefined;
+  text?: string | number | undefined;
+  attrs?: Record<string, string> | undefined;
+  parent?: HTMLElement | undefined;
+}
+
+export interface DialogParts {
+  dialog: HTMLDialogElement;
+  content: HTMLDivElement;
+}

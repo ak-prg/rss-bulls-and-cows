@@ -6,6 +6,13 @@ import { createInputRow, initInputRow, updateInputRow } from './input-row';
 
 const { createElement } = elementCreators;
 
+let historyList: HTMLUListElement;
+let first: HTMLLIElement;
+let last: HTMLDivElement;
+let charset: string;
+let allowed: HTMLSpanElement;
+let winMessageSpan: HTMLSpanElement;
+
 export function createBoard(): HTMLElement {
   const board = createElement('main', {
     className: 'game-board',
@@ -32,13 +39,6 @@ export function createBoard(): HTMLElement {
 
   return board;
 }
-
-let historyList: HTMLUListElement;
-let first: HTMLLIElement;
-let last: HTMLDivElement;
-let charset: string;
-let allowed: HTMLSpanElement;
-let winMessageSpan: HTMLSpanElement;
 
 export function initBoard(state: State, callbacks: BoardCallbacks): void {
   const firstRow: Move = {
