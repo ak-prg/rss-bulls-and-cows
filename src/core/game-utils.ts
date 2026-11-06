@@ -32,8 +32,16 @@ export function createPermutationCounter(): (
   length: number,
   base: number
 ) => number {
-  return () => {
-    throw new Error('not implemented');
+  let cache = new Map<string, number>();
+
+  return function count(length: number, base: number): number {
+    const key = `${length}-${base}`;
+    const cached = cache.get(key);
+    if (cached !== undefined) return cached;
+
+    const result = length === 0 ? 1 : base * count(length - 1, base - 1);
+    cache = new Map<string, number>([...cache, [key, result]]);
+    return result;
   };
 }
 
