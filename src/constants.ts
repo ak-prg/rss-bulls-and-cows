@@ -27,3 +27,5 @@ export const SAMPLE_ROWS = [
 ];
 
 export const DIGITS = '0123456789abcdef';
+
+export const LOC_STOR_KEY = 'bulls-and-cows';
