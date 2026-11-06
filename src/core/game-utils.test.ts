@@ -3,8 +3,10 @@ import {
   areDigitsUnique,
   countPossibleSecrets,
   createDigitValidator,
+  generateSecret,
   isGuessLengthOk,
   isGuessRepeated,
+  isValidGuess,
 } from './game-utils';
 import type { Move } from '../types';
 
@@ -154,5 +156,66 @@ describe('isGuessRepeated', () => {
   it('does not mutate history', () => {
     expect(() => isGuessRepeated('999', moves)).not.toThrow();
     expect(moves).toHaveLength(2);
+  });
+});
+
+// Deterministic random sources
+const always = (value: number) => () => value;
+const sequence = (values: number[]) => {
+  let i = 0;
+  return () => values[i++ % values.length] ?? 0;
+};
+const seeded = (seed: number) => {
+  let s = seed;
+  return () => {
+    s = (s * 1664525 + 1013904223) % 4294967296;
+    return s / 4294967296;
+  };
+};
+
+describe('generateSecret', () => {
+  it('returns a predictable result with a deterministic random', () => {
+    expect(generateSecret(4, 10, always(0))).toBe('3210');
+    expect(generateSecret(3, 10, always(0.999))).toBe('789');
+  });
+
+  it('returns the same result for the same random sequence', () => {
+    const a = generateSecret(4, 16, sequence([0.1, 0.7, 0.3, 0.9]));
+    const b = generateSecret(4, 16, sequence([0.1, 0.7, 0.3, 0.9]));
+    expect(a).toBe(b);
+  });
+
+  it('can start with zero (leading zero kept in string)', () => {
+    const secret = generateSecret(1, 10, always(0));
+    expect(secret).toBe('0');
+    expect(typeof secret).toBe('string');
+  });
+
+  it('uses only digits of the given base', () => {
+    expect(generateSecret(2, 2, always(0.999))).toBe('01');
+    expect(generateSecret(2, 16, always(0.999))).toBe('ef');
+  });
+
+  it.each([
+    [2, 2],
+    [4, 8],
+    [6, 10],
+    [6, 16],
+  ])(
+    'length %i, base %i: correct length, unique, valid digits',
+    (length, base) => {
+      const random = seeded(length * 100 + base);
+      for (let n = 0; n < 50; n++) {
+        const secret = generateSecret(length, base, random);
+        expect(secret).toHaveLength(length);
+        expect(new Set(secret).size).toBe(length);
+        expect(isValidGuess(secret, length, base)).toBe(true);
+      }
+    }
+  );
+
+  it('uses Math.random by default', () => {
+    const secret = generateSecret(4, 10);
+    expect(isValidGuess(secret, 4, 10)).toBe(true);
   });
 });
