@@ -27,3 +27,33 @@ export interface HeaderCallbacks {
 export interface ViewCallbacks {
   onNewGame: () => void;
 }
+
+export interface State {
+  round: Readonly<Round>;
+  statistics: StatsByCategory;
+  gameStatus: GameStatus;
+  radix: number;
+  secretLength: number;
+}
+
+export interface Round {
+  radix: number;
+  secretLength: number;
+  secret: string;
+  moves: readonly Readonly<Move>[];
+  startTime: number;
+}
+
+export type StatsByCategory = Record<CategoryKey, RoundStat[]>;
+
+export type CategoryKey = `${number}:${number}`;
+
+export interface RoundStat {
+  date: number;
+  radix: number;
+  secretLength: number;
+  moves: number;
+  timeMs: number;
+}
+
+export type GameStatus = 'idle' | 'playing' | 'won';
