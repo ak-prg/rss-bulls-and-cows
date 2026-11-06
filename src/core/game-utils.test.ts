@@ -1,5 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { countPossibleSecrets, createDigitValidator } from './game-utils';
+import {
+  areDigitsUnique,
+  countPossibleSecrets,
+  createDigitValidator,
+  isGuessLengthOk,
+  isGuessRepeated,
+} from './game-utils';
+import type { Move } from '../types';
 
 /*
 it.each syntax for multiple cases with same expected result:
@@ -74,5 +81,78 @@ describe('countPossibleSecrets', () => {
     const first = countPossibleSecrets(5, 16);
     const second = countPossibleSecrets(5, 16);
     expect(second).toBe(first);
+  });
+});
+
+describe('isGuessLengthOk', () => {
+  it.each([
+    ['12', 2],
+    ['1234', 4],
+    ['f0e1d2', 6],
+  ])('accepts input for correct length', (guess, length) => {
+    expect(isGuessLengthOk(guess, length)).toBe(true);
+  });
+
+  it.each([
+    ['123', 4],
+    ['12345', 4],
+    ['', 2],
+  ])('rejects input for incorrect length', (guess, length) => {
+    expect(isGuessLengthOk(guess, length)).toBe(false);
+  });
+});
+
+describe('areDigitsUnique', () => {
+  it.each(['0123', 'abcd', 'f0e1d2', '01'])(
+    'accepts unique digits in the input',
+    (guess) => {
+      expect(areDigitsUnique(guess)).toBe(true);
+    }
+  );
+
+  it.each(['1123', '00', 'abca'])(
+    'rejects repeated digits in the input',
+    (guess) => {
+      expect(areDigitsUnique(guess)).toBe(false);
+    }
+  );
+
+  it('treats upper and lower case as the same digit', () => {
+    expect(areDigitsUnique('aA12')).toBe(false);
+    expect(areDigitsUnique('Ab12')).toBe(true);
+  });
+
+  it('accepts an empty string', () => {
+    expect(areDigitsUnique('')).toBe(true);
+  });
+});
+
+describe('isGuessRepeated', () => {
+  const moves: readonly Readonly<Move>[] = Object.freeze([
+    Object.freeze({ guess: '123', bulls: 1, cows: 0 }),
+    Object.freeze({ guess: 'abc', bulls: 0, cows: 1 }),
+  ]);
+
+  it('detects a guess already in history', () => {
+    expect(isGuessRepeated('123', moves)).toBe(true);
+  });
+
+  it('is case-insensitive', () => {
+    expect(isGuessRepeated('ABC', moves)).toBe(true);
+  });
+
+  it('returns false for a new guess', () => {
+    expect(isGuessRepeated('321', moves)).toBe(false);
+  });
+
+  it('returns false for empty history', () => {
+    expect(isGuessRepeated('123', [])).toBe(false);
+  });
+
+  // Mutating a frozen object throws an error, and not.toThrow() would catch it,
+  // so any mutation makes the test fail.
+  it('does not mutate history', () => {
+    expect(() => isGuessRepeated('999', moves)).not.toThrow();
+    expect(moves).toHaveLength(2);
   });
 });
