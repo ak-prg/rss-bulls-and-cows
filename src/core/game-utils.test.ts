@@ -219,3 +219,43 @@ describe('generateSecret', () => {
     expect(isValidGuess(secret, 4, 10)).toBe(true);
   });
 });
+
+describe('isValidGuess', () => {
+  it.each([
+    ['0123', 4, 10],
+    ['9876', 4, 10],
+    ['01', 2, 2],
+    ['1237', 4, 8],
+    ['abcd', 4, 16],
+    ['aBcD', 4, 16],
+    ['f0e1d2', 6, 16],
+  ])('accepts %s (length %i, base %i)', (guess, length, base) => {
+    expect(isValidGuess(guess, length, base)).toBe(true);
+  });
+
+  it.each([
+    ['123', 4, 10],
+    ['12345', 4, 10],
+    ['', 2, 10],
+  ])('rejects wrong length: %s (length %i, base %i)', (guess, length, base) => {
+    expect(isValidGuess(guess, length, base)).toBe(false);
+  });
+
+  it.each([
+    ['1123', 4, 10],
+    ['00', 2, 2],
+    ['aA12', 4, 16],
+  ])('rejects repeated digits: %s', (guess, length, base) => {
+    expect(isValidGuess(guess, length, base)).toBe(false);
+  });
+
+  it.each([
+    ['12a3', 4, 10],
+    ['1238', 4, 8],
+    ['02', 2, 2],
+    ['ag', 2, 16],
+    ['1 23', 4, 10],
+  ])('rejects invalid digits: %s (base %i)', (guess, length, base) => {
+    expect(isValidGuess(guess, length, base)).toBe(false);
+  });
+});
