@@ -1,8 +1,11 @@
+import { DIGITS } from '../constants';
 import type { Move } from '../types';
 
 export function createDigitValidator(base: number): (char: string) => boolean {
-  void base;
-  throw new Error('not implemented');
+  const charset = DIGITS.slice(0, base);
+  return (char: string): boolean => {
+    return char.length === 1 && charset.includes(char.toLowerCase());
+  };
 }
 
 export function isGuessLengthOk(guess: string, length: number): boolean {
