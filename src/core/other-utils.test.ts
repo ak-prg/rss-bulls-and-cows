@@ -1,11 +1,13 @@
 import { describe, it, expect } from 'vitest';
 import {
+  addStat,
   formatDate,
   formatTime,
   getCategoryKey,
+  getTop10,
   toRowValues,
 } from './other-utils';
-import type { RoundStat } from '../types';
+import type { RoundStat, StatsByCategory } from '../types';
 
 describe('getCategoryKey', () => {
   it('returns concatinated arguments with colon', () => {
@@ -131,5 +133,121 @@ describe('toRowValues', () => {
     expect(toRowValues(earlyRecord, 0, UTC_MINUS_3_OFFSET)[1]).toBe(
       '05.11.2026'
     );
+  });
+});
+
+const stat = (moves: number, timeMs: number): RoundStat => ({
+  date: 0,
+  radix: 10,
+  secretLength: 4,
+  moves,
+  timeMs,
+});
+
+describe('getTop10', () => {
+  it('returns an empty array for no stats', () => {
+    expect(getTop10([])).toEqual([]);
+  });
+
+  it('sorts by moves ascending', () => {
+    const result = getTop10([stat(9, 100), stat(3, 100), stat(5, 100)]);
+    expect(result.map((s) => s.moves)).toEqual([3, 5, 9]);
+  });
+
+  it('breaks ties by time ascending', () => {
+    const result = getTop10([stat(5, 3000), stat(5, 1000), stat(5, 2000)]);
+    expect(result.map((s) => s.timeMs)).toEqual([1000, 2000, 3000]);
+  });
+
+  it.each([
+    [
+      [stat(6, 1000), stat(5, 9000)],
+      [5, 6],
+    ],
+    [
+      [stat(5, 9000), stat(6, 1000)],
+      [5, 6],
+    ],
+    [
+      [stat(5, 9000), stat(6, 1000), stat(4, 5000)],
+      [4, 5, 6],
+    ],
+    [
+      [stat(7, 1000), stat(5, 9000), stat(6, 500)],
+      [5, 6, 7],
+    ],
+  ])('prefers fewer moves over shorter time (case %#)', (input, expected) => {
+    expect(getTop10(input).map((s) => s.moves)).toEqual(expected);
+  });
+
+  it('keeps only the best 10', () => {
+    const stats = Array.from({ length: 15 }, (_, i) => stat(15 - i, 1000));
+    const result = getTop10(stats);
+    expect(result).toHaveLength(10);
+    expect(result.map((s) => s.moves)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+  });
+
+  it('returns all when fewer than 10', () => {
+    expect(getTop10([stat(1, 1), stat(2, 2)])).toHaveLength(2);
+  });
+
+  it('does not mutate the input array', () => {
+    const input = Object.freeze([stat(9, 1), stat(1, 1)]);
+    const result = getTop10(input);
+    expect(input.map((s) => s.moves)).toEqual([9, 1]);
+    expect(result).not.toBe(input);
+  });
+});
+
+describe('addStat', () => {
+  const statFor = (
+    moves: number,
+    secretLength: number,
+    radix: number
+  ): RoundStat => ({
+    date: 0,
+    radix,
+    secretLength,
+    moves,
+    timeMs: 1000,
+  });
+
+  it('creates the category when it does not exist yet', () => {
+    const result = addStat({}, statFor(3, 4, 10));
+    expect(result['4:10']).toEqual([statFor(3, 4, 10)]);
+  });
+
+  it('adds to an existing category in sorted order', () => {
+    const stats: StatsByCategory = {
+      '4:10': [statFor(2, 4, 10), statFor(5, 4, 10)],
+    };
+    const result = addStat(stats, statFor(3, 4, 10));
+    expect(result['4:10']?.map((s) => s.moves)).toEqual([2, 3, 5]);
+  });
+
+  it('keeps only the best 10 in the category', () => {
+    const stats: StatsByCategory = {
+      '4:10': Array.from({ length: 10 }, (_, i) => statFor(i + 1, 4, 10)),
+    };
+    const result = addStat(stats, statFor(11, 4, 10));
+    expect(result['4:10']).toHaveLength(10);
+    expect(result['4:10']?.map((s) => s.moves)).not.toContain(11);
+  });
+
+  it('leaves other categories unchanged', () => {
+    const other = [statFor(1, 2, 2)];
+    const result = addStat({ '2:2': other }, statFor(3, 4, 10));
+    expect(result['2:2']).toBe(other);
+  });
+
+  it('does not mutate the input', () => {
+    const list = [statFor(5, 4, 10)];
+    const stats: StatsByCategory = { '4:10': list };
+    Object.freeze(list);
+    Object.freeze(stats);
+
+    const result = addStat(stats, statFor(3, 4, 10));
+    expect(stats['4:10']).toHaveLength(1);
+    expect(result).not.toBe(stats);
   });
 });
