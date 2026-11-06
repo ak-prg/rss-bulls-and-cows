@@ -1,4 +1,12 @@
-import { state } from './model';
+import {
+  validateRadixInput,
+  validateLengthSecret,
+  generateSecret,
+  isValidGuess,
+  isGuessRepeated,
+} from './core/game-utils';
+import { evaluateGuess } from './core/game-utils_';
+import { finishRound, state, updateState } from './model';
 import type {
   BoardCallbacks,
   GameStatus,
@@ -49,25 +57,52 @@ function onOpenRecords() {
 }
 
 // board callback
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function onGuess(guess: string) {
-  return;
+
+function onGuess(answer: string) {
+  if (state.gameStatus !== 'playing') return;
+
+  const guess = answer.trim();
+
+  if (!isValidGuess(guess, state.secretLength, state.radix)) return;
+  if (isGuessRepeated(guess, state.round.moves)) return;
+
+  const result = evaluateGuess(state.round.secret, guess);
+  const move = { ...result, guess };
+  updateState('round', { ...state.round, moves: [...state.round.moves, move] });
+  if (move.bulls === state.secretLength) {
+    finishRound();
+    onSetGameStatus('won');
+  }
 }
 
 // settings callbacs
-function onSetRadix(radix: number): void {
-  void radix;
+function onSetRadix(choice: number): void {
+  if (state.gameStatus === 'playing') return;
+  if (!validateRadixInput(choice)) return;
+  updateState('radix', choice);
 }
 
-function onSetLength(length: number): void {
-  void length;
+function onSetLength(choice: number): void {
+  if (state.gameStatus === 'playing') return;
+  if (!validateLengthSecret(choice, state.radix)) return;
+  updateState('secretLength', choice);
 }
 
 function onSetGameStatus(status: GameStatus): void {
-  void status;
+  updateState('gameStatus', status);
 }
 
 function onStart(): void {
+  if (state.gameStatus === 'playing') return;
+  if (!validateLengthSecret(state.secretLength, state.radix)) return;
+
+  onSetGameStatus('playing');
+  const newSecret = generateSecret(state.secretLength, state.radix);
+  updateState('round', {
+    secret: newSecret,
+    startTime: Date.now(),
+    moves: [],
+  });
   initGameBoard(state);
 }
 

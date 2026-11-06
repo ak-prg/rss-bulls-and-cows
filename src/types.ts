@@ -7,8 +7,6 @@ export interface State {
 }
 
 export interface Round {
-  radix: number;
-  secretLength: number;
   secret: string;
   moves: readonly Readonly<Move>[];
   startTime: number;
