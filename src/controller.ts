@@ -1,5 +1,12 @@
-import { renderInitial } from './view';
+import type { ViewCallbacks } from './types';
+import { openSettingsModal, renderInitial } from './view';
 
 export function main(): void {
-  renderInitial();
+  const viewCallbacks: ViewCallbacks = { onNewGame };
+
+  renderInitial(viewCallbacks);
+}
+
+function onNewGame() {
+  openSettingsModal();
 }

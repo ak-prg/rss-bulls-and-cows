@@ -18,3 +18,12 @@ export interface MoveResult {
 export interface Move extends MoveResult {
   guess: string;
 }
+
+export interface HeaderCallbacks {
+  onNewGame: () => void;
+  onOpenRecords: () => void;
+}
+
+export interface ViewCallbacks {
+  onNewGame: () => void;
+}

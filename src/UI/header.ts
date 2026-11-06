@@ -1,8 +1,9 @@
+import type { HeaderCallbacks } from '../types';
 import { elementCreators } from './element-creators';
 
 const { createElement, createButton } = elementCreators;
 
-export function createHeader(): HTMLElement {
+export function createHeader(callbacks: HeaderCallbacks): HTMLElement {
   const header = createElement('header', {
     className: 'header',
     parent: document.body,
@@ -12,14 +13,20 @@ export function createHeader(): HTMLElement {
     parent: header,
   });
 
-  createButton('New Game', 'button button--primary header__button', nav);
-  createButton('Options', 'button header__button', nav);
+  const newGameButton = createButton(
+    'New Game',
+    'button button--primary header__button',
+    nav
+  );
   const topButton = createButton('Top ', 'button header__button', nav);
   createElement('span', {
     className: 'header__top-length',
     text: 10,
     parent: topButton,
   });
+
+  newGameButton.addEventListener('click', callbacks.onNewGame);
+  topButton.addEventListener('click', callbacks.onOpenRecords);
 
   return header;
 }
