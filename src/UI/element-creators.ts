@@ -89,6 +89,20 @@ function createFieldset(
   return fieldset;
 }
 
+function createTableRow(
+  values: readonly (string | number)[],
+  cellTag: 'th' | 'td',
+  cellClass: string,
+  parent?: HTMLElement
+): HTMLTableRowElement {
+  const row = createElement('tr', { parent });
+  values.forEach((value) =>
+    createElement(cellTag, { className: cellClass, text: value, parent: row })
+  );
+
+  return row;
+}
+
 export const elementCreators = {
   createElement,
   createButton,
@@ -96,4 +110,5 @@ export const elementCreators = {
   createLink,
   createDialog,
   createFieldset,
+  createTableRow,
 };

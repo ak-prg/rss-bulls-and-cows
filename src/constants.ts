@@ -16,3 +16,12 @@ export const BASE_OPTIONS = [
 ];
 
 export const SAMPLE_COUNT = 5040; // temporary placeholder
+
+export const TOP_LENGTH = 10;
+
+export const TABLE_HEADERS = ['#', 'Date', 'Attempts', 'Time'];
+
+export const SAMPLE_ROWS = [
+  ['1', '05.11.2026', '3', '01:05'],
+  ['2', '05.11.2026', '5', '00:30'],
+];

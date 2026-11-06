@@ -6,6 +6,7 @@ import './styles/footer.scss';
 import './styles/history-row.scss';
 import './styles/input-row.scss';
 import './styles/settings-modal.scss';
+import './styles/records-modal.scss';
 
 import { main } from './controller';
 

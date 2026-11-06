@@ -1,0 +1,64 @@
+.records-modal {
+  margin: auto;
+  padding: 0;
+  color: var(--color-text);
+  background-color: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  min-width: min(24rem, calc(100vw - 2rem));
+  min-height: 18rem;
+
+  &::backdrop {
+    background-color: rgb(0 0 0 / 0.5);
+  }
+
+  &__content {
+    padding: 2rem;
+    text-align: center;
+  }
+
+  &__title {
+    font-size: 1.75rem;
+    font-weight: var(--font-weight-medium);
+  }
+
+  &__settings {
+    margin-bottom: 1rem;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+  }
+
+  &__table {
+    margin: 0 auto;
+    border-collapse: collapse;
+  }
+
+  &__cell {
+    padding: 0.25rem 1rem;
+    font-variant-numeric: tabular-nums;
+
+    &--header {
+      font-weight: var(--font-weight-medium);
+      color: var(--color-on-secondary);
+    }
+  }
+
+  &__empty {
+    color: var(--color-text-muted);
+    padding-block: 2rem;
+  }
+
+  &__close {
+    margin-top: 1.5rem;
+  }
+
+  @media (max-width: 30rem) {
+    &__content {
+      padding: 1.5rem 1rem;
+    }
+
+    &__cell {
+      padding-inline: 0.5rem;
+    }
+  }
+}
