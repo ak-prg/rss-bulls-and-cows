@@ -1,17 +1,19 @@
+// Pure functions
+
 import type { CategoryKey, RoundStat } from '../types';
 
 export function getCategoryKey(
   secretLength: number,
   radix: number
 ): CategoryKey {
-  void secretLength;
-  void radix;
-  return '' as CategoryKey;
+  return `${secretLength}:${radix}`;
 }
 
 export function formatTime(ms: number): string {
-  void ms;
-  return '';
+  const totalSeconds = Math.floor(ms / 1000);
+  const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+  const seconds = String(totalSeconds % 60).padStart(2, '0');
+  return `${minutes}:${seconds}`;
 }
 
 export function toRowValues(
@@ -19,14 +21,17 @@ export function toRowValues(
   index: number,
   timezoneOffsetMin: number
 ): string[] {
-  void record;
-  void index;
-  void timezoneOffsetMin;
-  return [''];
+  return [
+    String(index + 1),
+    formatDate(record.date, timezoneOffsetMin),
+    String(record.moves),
+    formatTime(record.timeMs),
+  ];
 }
 
 export function formatDate(ms: number, timezoneOffsetMin: number): string {
-  void ms;
-  void timezoneOffsetMin;
-  return '';
+  const local = new Date(ms - timezoneOffsetMin * 60000);
+  const day = String(local.getUTCDate()).padStart(2, '0');
+  const month = String(local.getUTCMonth() + 1).padStart(2, '0');
+  return `${day}.${month}.${local.getUTCFullYear()}`;
 }
