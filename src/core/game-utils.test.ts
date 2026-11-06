@@ -7,6 +7,8 @@ import {
   isGuessLengthOk,
   isGuessRepeated,
   isValidGuess,
+  validateLengthSecret,
+  validateRadixInput,
 } from './game-utils';
 import type { Move } from '../types';
 
@@ -257,5 +259,47 @@ describe('isValidGuess', () => {
     ['1 23', 4, 10],
   ])('rejects invalid digits: %s (base %i)', (guess, length, base) => {
     expect(isValidGuess(guess, length, base)).toBe(false);
+  });
+});
+
+describe('validateRadixInput', () => {
+  it.each([2, 8, 10, 16])('accepts %i', (radix) => {
+    expect(validateRadixInput(radix)).toBe(true);
+  });
+
+  it.each([0, 1, 3, 9, 12, 17, -10, 10.5])('rejects %s', (radix) => {
+    expect(validateRadixInput(radix)).toBe(false);
+  });
+});
+
+describe('validateLengthSecret', () => {
+  it('allows only length 2 for binary', () => {
+    expect(validateLengthSecret(2, 2)).toBe(true);
+    expect(validateLengthSecret(3, 2)).toBe(false);
+    expect(validateLengthSecret(6, 2)).toBe(false);
+  });
+
+  it.each([
+    [2, 8],
+    [6, 8],
+    [2, 10],
+    [6, 10],
+    [2, 16],
+    [6, 16],
+  ])('accepts length %i for base %i', (length, base) => {
+    expect(validateLengthSecret(length, base)).toBe(true);
+  });
+
+  it.each([
+    [1, 10],
+    [7, 10],
+    [0, 16],
+  ])('rejects out-of-range length %i for base %i', (length, base) => {
+    expect(validateLengthSecret(length, base)).toBe(false);
+  });
+
+  it('rejects non-integer length', () => {
+    expect(validateLengthSecret(2.5, 10)).toBe(false);
+    expect(validateLengthSecret(NaN, 10)).toBe(false);
   });
 });
