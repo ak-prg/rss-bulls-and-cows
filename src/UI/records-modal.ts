@@ -1,4 +1,6 @@
 import { SAMPLE_ROWS, TABLE_HEADERS, TOP_LENGTH } from '../constants';
+import { getCategoryKey, toRowValues } from '../core/other-utils';
+import type { State } from '../types';
 import { elementCreators } from './element-creators';
 
 const {
@@ -59,5 +61,48 @@ export function createRecordsModal(): HTMLDialogElement {
 
   createButton('Close', 'button button--primary records-modal__close', content);
 
+  const closeButton = content.querySelector<HTMLButtonElement>(
+    '.records-modal__close'
+  );
+  closeButton?.addEventListener('click', () => dialog.close());
+
+  dialog.addEventListener('click', (event) => {
+    if (event.target === dialog) dialog.close();
+  });
+
   return dialog;
+}
+
+export function initRecordsModal(
+  dialog: HTMLDialogElement,
+  state: State
+): void {
+  const settings = dialog.querySelector<HTMLParagraphElement>(
+    '.records-modal__settings'
+  );
+  const table = dialog.querySelector<HTMLTableElement>('.records-modal__table');
+  const tbody = dialog.querySelector<HTMLTableSectionElement>('tbody');
+  const empty = dialog.querySelector<HTMLParagraphElement>(
+    '.records-modal__empty'
+  );
+  if (!settings || !table || !tbody || !empty) return;
+
+  const key = getCategoryKey(state.secretLength, state.radix);
+  const records = (state.statistics[key] ?? []).slice(0, TOP_LENGTH);
+
+  settings.textContent = `Length: ${state.secretLength} Base: ${state.radix}`;
+  tbody.replaceChildren(
+    ...records.map((record, index) =>
+      createTableRow(
+        toRowValues(record, index, new Date(record.date).getTimezoneOffset()),
+        'td',
+        'records-modal__cell'
+      )
+    )
+  );
+
+  table.hidden = records.length === 0;
+  empty.hidden = records.length > 0;
+
+  dialog.showModal();
 }
