@@ -1,6 +1,6 @@
-import type { HeaderCallbacks, ViewCallbacks } from './types';
+import type { HeaderCallbacks, State, ViewCallbacks } from './types';
 import { createFooter } from './UI/footer';
-import { createBoard } from './UI/game-board';
+import { createBoard, initBoard, updateBoard } from './UI/game-board';
 import { createHeader } from './UI/header';
 import { createRecordsModal } from './UI/records-modal';
 import { createSettingsModal } from './UI/settings-modal';
@@ -28,4 +28,12 @@ const openRecordsModal = () => {
 
 export function openSettingsModal() {
   settingsModal.showModal();
+}
+
+export function initUI(state: State) {
+  initBoard(state);
+}
+
+export function updateUI(state: State) {
+  updateBoard(state);
 }

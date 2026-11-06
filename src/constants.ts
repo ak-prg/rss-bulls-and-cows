@@ -25,3 +25,5 @@ export const SAMPLE_ROWS = [
   ['1', '05.11.2026', '3', '01:05'],
   ['2', '05.11.2026', '5', '00:30'],
 ];
+
+export const DIGITS = '0123456789abcdef';

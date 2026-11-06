@@ -1,4 +1,8 @@
+import { DIGITS } from '../constants';
+import type { Move, State } from '../types';
 import { elementCreators } from './element-creators';
+import { createHistoryRow } from './history-row';
+import { createInputRow } from './input-row';
 
 const { createElement } = elementCreators;
 
@@ -27,4 +31,53 @@ export function createBoard(): HTMLElement {
   });
 
   return board;
+}
+
+let historyList: HTMLUListElement;
+let first: HTMLLIElement;
+let last: HTMLDivElement;
+let charset: string;
+let allowed: HTMLSpanElement;
+let winMessageSpan: HTMLSpanElement;
+
+export function initBoard(state: State): void {
+  const firstRow: Move = {
+    guess: '?'.repeat(state.secretLength),
+    bulls: 0,
+    cows: 0,
+  };
+
+  historyList = document.querySelector(
+    '.game-board__history'
+  ) as HTMLUListElement;
+  first = createHistoryRow(firstRow, true, historyList);
+  last = createInputRow(state.secretLength, historyList);
+
+  charset = DIGITS.slice(0, state.radix);
+  allowed = document.querySelector(
+    '.game-board__symbols-list'
+  ) as HTMLSpanElement;
+
+  winMessageSpan = document.querySelector(
+    '.game-board__win-message'
+  ) as HTMLSpanElement;
+
+  updateBoard(state);
+}
+
+export function updateBoard(state: State): void {
+  historyList.replaceChildren();
+  historyList.appendChild(first);
+  const middle = state.round.moves.map((move) =>
+    createHistoryRow(move, false, historyList)
+  );
+  middle.forEach((el) => historyList.appendChild(el));
+  historyList.appendChild(last);
+
+  const isPlaying = state.gameStatus === 'playing';
+  allowed.textContent = charset;
+
+  (allowed.parentElement as HTMLElement).hidden = !isPlaying;
+  last.hidden = !isPlaying;
+  winMessageSpan.hidden = state.gameStatus !== 'won';
 }
