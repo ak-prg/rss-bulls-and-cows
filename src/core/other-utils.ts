@@ -1,5 +1,6 @@
 // Pure functions
 
+import { TOP_LENGTH } from '../constants';
 import type { CategoryKey, RoundStat, StatsByCategory } from '../types';
 
 export function getCategoryKey(
@@ -36,18 +37,17 @@ export function formatDate(ms: number, timezoneOffsetMin: number): string {
   return `${day}.${month}.${local.getUTCFullYear()}`;
 }
 
-// todo
-
 export function getTop10(stats: readonly RoundStat[]): RoundStat[] {
-  void stats;
-  throw new Error('not implemented');
+  return [...stats]
+    .sort((a, b) => a.moves - b.moves || a.timeMs - b.timeMs)
+    .slice(0, TOP_LENGTH);
 }
 
 export function addStat(
   stats: StatsByCategory,
   newStat: RoundStat
 ): StatsByCategory {
-  void stats;
-  void newStat;
-  throw new Error('not implemented');
+  const key = getCategoryKey(newStat.secretLength, newStat.radix);
+  const updatedList = getTop10([...(stats[key] ?? []), newStat]);
+  return { ...stats, [key]: updatedList };
 }
