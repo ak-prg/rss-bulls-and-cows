@@ -80,8 +80,16 @@ export function isValidGuess(
   length: number,
   base: number
 ): boolean {
-  void length;
-  void base;
-  void guess;
-  throw new Error('not implemented');
+  return (
+    isGuessLengthOk(guess, length) &&
+    areDigitsUnique(guess) &&
+    areDigitsAllowed(guess, base)
+  );
+}
+
+export function areDigitsAllowed(guess: string, base: number): boolean {
+  const validator = createDigitValidator(base);
+  return [...guess].every((char) => {
+    return validator(char);
+  });
 }
