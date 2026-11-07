@@ -11,6 +11,7 @@ import {
   validateRadixInput,
   areDigitsAllowed,
   evaluateGuess,
+  getSecretMapFromCache,
 } from './game-utils';
 import type { Move } from '../types';
 
@@ -357,5 +358,25 @@ describe('evaluateGuess', () => {
     const first = evaluateGuess('1234', '1234');
     const second = evaluateGuess('1234', '1234');
     expect(first).not.toBe(second);
+  });
+});
+
+describe('getSecretMapFromCache', () => {
+  it('maps each digit to its position', () => {
+    const map = getSecretMapFromCache('abc');
+    expect(map.get('a')).toBe(0);
+    expect(map.get('b')).toBe(1);
+    expect(map.get('c')).toBe(2);
+    expect(map.get('d')).toBeUndefined();
+  });
+
+  it('returns the cached map for the same secret', () => {
+    const first = getSecretMapFromCache('5678');
+    const second = getSecretMapFromCache('5678');
+    expect(second).toBe(first);
+  });
+
+  it('returns different maps for different secrets', () => {
+    expect(getSecretMapFromCache('12')).not.toBe(getSecretMapFromCache('21'));
   });
 });
