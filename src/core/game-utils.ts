@@ -106,9 +106,19 @@ export function evaluateGuess(secret: string, guess: string): MoveResult {
   );
 }
 
-function createCacheGetter(): (secret: string) => ReadonlyMap<string, number> {
-  return () => {
-    throw new Error('not implemented');
+function createCacheGetter() {
+  let secretCache = new Map<string, Map<string, number>>();
+
+  return function getter(secret: string): ReadonlyMap<string, number> {
+    const cached = secretCache.get(secret);
+    if (cached) return cached;
+
+    const newMap = new Map<string, number>([...secret].map((k, i) => [k, i]));
+    secretCache = new Map<string, Map<string, number>>([
+      ...secretCache,
+      [secret, newMap],
+    ]);
+    return newMap;
   };
 }
 
