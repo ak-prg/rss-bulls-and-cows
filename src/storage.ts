@@ -3,7 +3,7 @@ import type { StatsByCategory } from './types';
 
 export function fetchData(): StatsByCategory {
   try {
-    return JSON.parse(localStorage.getItem(LOC_STOR_KEY) ?? '{}');
+    return JSON.parse(localStorage.getItem(LOC_STOR_KEY) ?? '{}') ?? {};
   } catch {
     return {};
   }

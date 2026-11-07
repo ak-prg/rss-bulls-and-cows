@@ -1,3 +1,5 @@
+import type { Round } from './types';
+
 export const AUTHORS_REPO = 'https://github.com/ak-prg';
 
 export const RSS_COURSE = 'https://rs.school/courses/javascript';
@@ -28,4 +30,10 @@ export const SAMPLE_ROWS = [
 
 export const DIGITS = '0123456789abcdef';
 
-export const LOC_STOR_KEY = 'bulls-and-cows';
+export const LOC_STOR_KEY = 'rss-bulls-cows';
+
+export const EMPTY_ROUND: Round = {
+  secret: '0123',
+  moves: [],
+  startTime: 0,
+};

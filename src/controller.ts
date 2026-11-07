@@ -4,14 +4,15 @@ import {
   generateSecret,
   isValidGuess,
   isGuessRepeated,
+  evaluateGuess,
 } from './core/game-utils';
-import { evaluateGuess } from './core/game-utils_';
-import { finishRound, state, updateState } from './model';
+import { finishRound, initState, state, updateState } from './model';
 import type {
   BoardCallbacks,
   GameStatus,
   HeaderCallbacks,
   SettingsCallbacks,
+  StateCallbacks,
   ViewCallbacks,
 } from './types';
 import {
@@ -19,14 +20,20 @@ import {
   initGameBoard,
   openInitRecordsModal,
   openInitSettingsModal,
+  updateGameBoard,
 } from './view';
 
+let stateCb: StateCallbacks;
 let viewCb: ViewCallbacks;
 let boardCb: BoardCallbacks;
 let headerCb: HeaderCallbacks;
 let settingsCb: SettingsCallbacks;
 
 export function main(): void {
+  stateCb = {
+    onChangeDetected,
+  };
+
   headerCb = {
     onNewGame,
     onOpenRecords,
@@ -43,6 +50,7 @@ export function main(): void {
 
   viewCb = { headerCb, boardCb, settingsCb };
 
+  initState(stateCb);
   createViews(viewCb);
   initGameBoard(state);
 }
@@ -68,7 +76,9 @@ function onGuess(answer: string) {
 
   const result = evaluateGuess(state.round.secret, guess);
   const move = { ...result, guess };
-  updateState('round', { ...state.round, moves: [...state.round.moves, move] });
+  updateState({
+    round: { ...state.round, moves: [...state.round.moves, move] },
+  });
   if (move.bulls === state.secretLength) {
     finishRound();
     onSetGameStatus('won');
@@ -79,17 +89,17 @@ function onGuess(answer: string) {
 function onSetRadix(choice: number): void {
   if (state.gameStatus === 'playing') return;
   if (!validateRadixInput(choice)) return;
-  updateState('radix', choice);
+  updateState({ radix: choice });
 }
 
 function onSetLength(choice: number): void {
   if (state.gameStatus === 'playing') return;
   if (!validateLengthSecret(choice, state.radix)) return;
-  updateState('secretLength', choice);
+  updateState({ secretLength: choice });
 }
 
 function onSetGameStatus(status: GameStatus): void {
-  updateState('gameStatus', status);
+  updateState({ gameStatus: status });
 }
 
 function onStart(): void {
@@ -98,14 +108,17 @@ function onStart(): void {
 
   onSetGameStatus('playing');
   const newSecret = generateSecret(state.secretLength, state.radix);
-  updateState('round', {
-    secret: newSecret,
-    startTime: Date.now(),
-    moves: [],
+  updateState({
+    round: {
+      secret: newSecret,
+      startTime: Date.now(),
+      moves: [],
+    },
   });
   initGameBoard(state);
 }
 
-// function onChangeDetected() {
-//   updateUI(state);
-// }
+// undate some elements UI on every state change
+function onChangeDetected() {
+  updateGameBoard(state);
+}

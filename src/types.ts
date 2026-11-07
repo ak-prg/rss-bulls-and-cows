@@ -59,6 +59,10 @@ export interface SettingsCallbacks {
   onSetGameStatus: (status: GameStatus) => void;
 }
 
+export interface StateCallbacks {
+  onChangeDetected: () => void;
+}
+
 // UI
 
 export interface ElementOptions {
