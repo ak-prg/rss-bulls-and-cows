@@ -1,5 +1,5 @@
 import { DIGITS } from '../constants';
-import type { Move } from '../types';
+import type { Move, MoveResult } from '../types';
 
 export function isGuessLengthOk(guess: string, length: number): boolean {
   return guess.length === length;
@@ -40,7 +40,6 @@ export function createPermutationCounter() {
 
 export const countPossibleSecrets = createPermutationCounter();
 
-// to add
 export function validateRadixInput(input: number): boolean {
   return [2, 8, 10, 16].includes(input);
 }
@@ -92,3 +91,18 @@ export function areDigitsAllowed(guess: string, base: number): boolean {
     return validator(char);
   });
 }
+
+// to add
+export function evaluateGuess(secret: string, guess: string): MoveResult {
+  void secret;
+  void guess;
+  throw new Error('not implemented');
+}
+
+function createCacheGetter(): (secret: string) => ReadonlyMap<string, number> {
+  return () => {
+    throw new Error('not implemented');
+  };
+}
+
+export const getSecretMapFromCache = createCacheGetter();
