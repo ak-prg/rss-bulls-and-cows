@@ -42,14 +42,13 @@ export const countPossibleSecrets = createPermutationCounter();
 
 // to add
 export function validateRadixInput(input: number): boolean {
-  void input;
-  throw new Error('not implemented');
+  return [2, 8, 10, 16].includes(input);
 }
 
 export function validateLengthSecret(length: number, base: number): boolean {
-  void length;
-  void base;
-  throw new Error('not implemented');
+  if (!Number.isInteger(length)) return false;
+  if (base === 2) return length === 2;
+  return length >= 2 && length <= 6;
 }
 
 function makeChoice(
