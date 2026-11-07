@@ -92,11 +92,18 @@ export function areDigitsAllowed(guess: string, base: number): boolean {
   });
 }
 
-// to add
 export function evaluateGuess(secret: string, guess: string): MoveResult {
-  void secret;
-  void guess;
-  throw new Error('not implemented');
+  const secretMap = getSecretMapFromCache(secret);
+
+  return [...secret].reduce(
+    (acc, _, i) => {
+      const result = secretMap.get((guess[i] ?? '').toLowerCase());
+      if (result === i) return { ...acc, bulls: acc.bulls + 1 };
+      else if (result !== undefined) return { ...acc, cows: acc.cows + 1 };
+      else return acc;
+    },
+    { bulls: 0, cows: 0 }
+  );
 }
 
 function createCacheGetter(): (secret: string) => ReadonlyMap<string, number> {
