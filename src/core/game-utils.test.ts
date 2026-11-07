@@ -9,6 +9,7 @@ import {
   isValidGuess,
   validateLengthSecret,
   validateRadixInput,
+  areDigitsAllowed,
 } from './game-utils';
 import type { Move } from '../types';
 
@@ -301,5 +302,30 @@ describe('validateLengthSecret', () => {
   it('rejects non-integer length', () => {
     expect(validateLengthSecret(2.5, 10)).toBe(false);
     expect(validateLengthSecret(NaN, 10)).toBe(false);
+  });
+});
+
+describe('areDigitsAllowed', () => {
+  it.each([
+    [2, '01'],
+    [8, '1237'],
+    [10, '9876'],
+    [16, 'aBcD'],
+  ])('base %i accepts %s', (base, guess) => {
+    expect(areDigitsAllowed(guess, base)).toBe(true);
+  });
+
+  it.each([
+    [2, '02'],
+    [8, '1238'],
+    [10, '12a3'],
+    [16, 'ag'],
+    [10, '1 23'],
+  ])('base %i rejects %s', (base, guess) => {
+    expect(areDigitsAllowed(guess, base)).toBe(false);
+  });
+
+  it('accepts an empty string (length is checked separately)', () => {
+    expect(areDigitsAllowed('', 10)).toBe(true);
   });
 });
