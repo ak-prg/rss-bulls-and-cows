@@ -69,10 +69,9 @@ export function initBoard(state: State, callbacks: BoardCallbacks): void {
 export function updateBoard(state: State): void {
   historyList.replaceChildren();
   historyList.appendChild(first);
-  const middle = state.round.moves.map((move) =>
+  state.round.moves.forEach((move) =>
     createHistoryRow(move, false, historyList)
   );
-  middle.forEach((el) => historyList.appendChild(el));
   historyList.appendChild(last);
 
   updateInputRow(state);

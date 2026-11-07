@@ -1,3 +1,4 @@
+import { TOP_LENGTH } from '../constants';
 import type { HeaderCallbacks } from '../types';
 import { elementCreators } from './element-creators';
 
@@ -21,7 +22,7 @@ export function createHeader(callbacks: HeaderCallbacks): HTMLElement {
   const topButton = createButton('Top ', 'button header__button', nav);
   createElement('span', {
     className: 'header__top-length',
-    text: 10,
+    text: TOP_LENGTH,
     parent: topButton,
   });
 
