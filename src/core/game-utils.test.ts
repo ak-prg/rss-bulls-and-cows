@@ -10,6 +10,7 @@ import {
   validateLengthSecret,
   validateRadixInput,
   areDigitsAllowed,
+  evaluateGuess,
 } from './game-utils';
 import type { Move } from '../types';
 
@@ -327,5 +328,34 @@ describe('areDigitsAllowed', () => {
 
   it('accepts an empty string (length is checked separately)', () => {
     expect(areDigitsAllowed('', 10)).toBe(true);
+  });
+});
+
+describe('evaluateGuess', () => {
+  it.each([
+    ['1234', '1234', 4, 0],
+    ['1234', '4321', 0, 4],
+    ['1234', '1243', 2, 2],
+    ['1234', '5678', 0, 0],
+    ['1234', '1567', 1, 0],
+    ['1234', '5123', 0, 3],
+    ['0123', '0123', 4, 0],
+    ['01', '10', 0, 2],
+  ])(
+    'secret %s, guess %s → %i bulls, %i cows',
+    (secret, guess, bulls, cows) => {
+      expect(evaluateGuess(secret, guess)).toEqual({ bulls, cows });
+    }
+  );
+
+  it('treats hex digits case-insensitively', () => {
+    expect(evaluateGuess('abcd', 'ABCD')).toEqual({ bulls: 4, cows: 0 });
+    expect(evaluateGuess('abcd', 'DCBA')).toEqual({ bulls: 0, cows: 4 });
+  });
+
+  it('returns a new object each call', () => {
+    const first = evaluateGuess('1234', '1234');
+    const second = evaluateGuess('1234', '1234');
+    expect(first).not.toBe(second);
   });
 });
