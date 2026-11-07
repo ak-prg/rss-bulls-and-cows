@@ -57,10 +57,13 @@ function makeChoice(
   digits: string[],
   random: () => number
 ): string {
-  void length;
-  void digits;
-  void random;
-  throw new Error('not implemented');
+  const randomIndex = Math.floor(digits.length * random());
+  const currentChoice = digits[randomIndex] ?? '';
+
+  if (length === 1) return currentChoice;
+
+  const withoutCurrent = digits.filter((d) => d !== currentChoice);
+  return makeChoice(length - 1, withoutCurrent, random) + currentChoice;
 }
 
 export function generateSecret(
@@ -68,11 +71,8 @@ export function generateSecret(
   base: number,
   random = Math.random
 ): string {
-  void length;
-  void base;
-  void random;
-  makeChoice(0, [''], () => 0);
-  throw new Error('not implemented');
+  const digits = DIGITS.split('').slice(0, base);
+  return makeChoice(length, digits, random);
 }
 
 export function isValidGuess(
