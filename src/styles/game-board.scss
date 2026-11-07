@@ -1,5 +1,5 @@
 .game-board {
-  max-width: 32.5rem;
+  width: min(100%, 30rem);
   margin: 0 auto;
   padding: 1rem;
   background-color: var(--color-surface);
