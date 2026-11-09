@@ -1,0 +1,56 @@
+@use 'board';
+
+.history-row {
+  @include board.row;
+
+  &--secret {
+    background-color: var(--color-bg);
+    border-color: var(--color-primary);
+  }
+
+  &__cells {
+    @include board.cells;
+  }
+
+  &__cell {
+    @include board.cell;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &--secret {
+      color: var(--color-on-primary);
+      background-color: var(--color-primary);
+      border-color: var(--color-primary);
+    }
+  }
+
+  &__result {
+    @include board.side;
+    gap: 1.75rem;
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
+
+    @media (max-width: 30rem) {
+      gap: 0.25rem;
+    }
+
+    &--labels {
+      font-size: var(--font-size-md);
+    }
+  }
+
+  &__bulls,
+  &__cows {
+    width: 3rem;
+    text-align: center;
+  }
+
+  &__bulls {
+    color: var(--color-bulls);
+  }
+
+  &__cows {
+    color: var(--color-cows);
+  }
+}
